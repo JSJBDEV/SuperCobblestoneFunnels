@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "scf",
+  "version": "${version}",
+
+  "name": "Super Cobblestone Funnels",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Acro"
+  ],
+  "contact": {
+    "homepage": "http://acro.rf.gd",
+    "sources": "https://github.com/JSJBDEV/SuperCobblestoneFunnels"
+  },
+
+  "license": "MIT",
+  "icon": "assets/scf/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "gd.rf.acro.scf.SCF"
+    ],
+    "client": ["gd.rf.acro.scf.ClientInit"]
+  },
+  "mixins": [
+    "modid.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x",
+    "cotton-resources": ">=1.5.1"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}

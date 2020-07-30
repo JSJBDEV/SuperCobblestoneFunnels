@@ -1,0 +1,10 @@
+{
+  "block.scf.cobblestone_funnel": "Cobblestone Funnel",
+  "block.scf.iron_funnel": "Iron Funnel",
+  "block.scf.copper_funnel": "Copper Funnel",
+  "block.scf.gold_funnel": "Gold Funnel",
+  "block.scf.diamond_funnel": "Diamond Funnel",
+  "block.scf.bronze_funnel": "Bronze Funnel",
+  "block.scf.netherite_funnel": "Netherite Funnel",
+  "itemGroup.scf.tab": "Super Cobblestone Funnels"
+}

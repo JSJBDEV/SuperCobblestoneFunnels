@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "funnels",
+  "pattern": [
+    "CCC",
+    "CSC",
+    " C "
+  ],
+  "key": {
+
+    "S": {
+      "item": "minecraft:stick"
+    },
+
+    "C": {
+      "item": "minecraft:cobblestone"
+    }
+  },
+  "result": {
+    "item": "scf:cobblestone_funnel",
+    "count": 1
+  }
+}
