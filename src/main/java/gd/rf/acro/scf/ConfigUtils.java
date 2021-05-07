@@ -59,40 +59,50 @@ public class ConfigUtils {
     private static List<String> makeDefaults()
     {
         List<String> defaults = new ArrayList<>();
-        defaults.add("#cobblestone funnel ore level (default 5)");
-        defaults.add("cobblelvl=5");
+        defaults.add("#cobblestone funnel tier (default 1)");
+        defaults.add("cobble-tier=1");
         defaults.add("#cobblestone funnel speed (default 60)");
-        defaults.add("cobblespeed=60");
+        defaults.add("cobble-speed=60");
 
-        defaults.add("#copper funnel ore level (default 9)");
-        defaults.add("copperlvl=9");
+        defaults.add("#copper funnel tier (default 2)");
+        defaults.add("copper-tier=2");
         defaults.add("#copper funnel speed (default 60)");
-        defaults.add("copperspeed=60");
+        defaults.add("copper-speed=60");
 
-        defaults.add("#bronze funnel ore level (default 9)");
-        defaults.add("bronzelvl=9");
-        defaults.add("#bronze funnel speed (default 30)");
-        defaults.add("bronzespeed=30");
+        defaults.add("#tin funnel tier (default 2)");
+        defaults.add("tin-tier=2");
+        defaults.add("#tin funnel speed (default 60)");
+        defaults.add("tin-speed=60");
 
-        defaults.add("#iron funnel ore level (default 14)");
-        defaults.add("ironlvl=14");
+        defaults.add("#bronze funnel tier (default 3)");
+        defaults.add("bronze-tier=3");
+        defaults.add("#bronze funnel speed (default 50)");
+        defaults.add("bronze-speed=50");
+
+        defaults.add("#silver funnel tier (default 4)");
+        defaults.add("silver-tier=4");
+        defaults.add("#silver funnel speed (default 60)");
+        defaults.add("silver-speed=60");
+
+        defaults.add("#iron funnel ore tier (default 4)");
+        defaults.add("iron-tier=4");
         defaults.add("#iron funnel speed (default 50)");
-        defaults.add("ironspeed=50");
+        defaults.add("iron-speed=50");
 
-        defaults.add("#gold funnel ore level (default 17)");
-        defaults.add("goldlvl=17");
+        defaults.add("#gold funnel ore tier (default 5)");
+        defaults.add("gold-tier=5");
         defaults.add("#gold funnel speed (default 40)");
-        defaults.add("goldspeed=40");
+        defaults.add("gold-speed=40");
 
-        defaults.add("#diamond funnel ore level (default -1)");
-        defaults.add("diamondlvl=-1");
+        defaults.add("#diamond funnel ore tier (default 6)");
+        defaults.add("diamond-tier=6");
         defaults.add("#diamond funnel speed (default 40)");
-        defaults.add("diamondspeed=40");
+        defaults.add("diamond-speed=40");
 
-        defaults.add("#netherite funnel ore level (default -1)");
-        defaults.add("netheritelvl=-1");
+        defaults.add("#netherite funnel ore tier (default 7)");
+        defaults.add("netherite-tier=7");
         defaults.add("#netherite funnel speed (default 20)");
-        defaults.add("netheritespeed=20");
+        defaults.add("netherite-speed=20");
         return defaults;
     }
 

@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "scf:block/copper_storage_block",
-		"particle": "scf:block/copper_storage_block"
+		"0": "scf:block/silver_storage_block",
+		"particle": "scf:block/silver_storage_block"
 	},
 	"elements": [
 		{

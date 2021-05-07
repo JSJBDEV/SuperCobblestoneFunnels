@@ -15,5 +15,6 @@ public class ClientInit implements ClientModInitializer {
                         packetContext.getPlayer().playSound(SoundEvents.BLOCK_LAVA_EXTINGUISH,1,1);
                     }
                 });
+
     }
 }
