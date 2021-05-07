@@ -2,7 +2,7 @@
 Making skyblocks less grindy for fabric 1.17
 
 this version uses a new system of tiers and rarities where an ore is defined in ores.acfg:
-`"minecraft:iron_ore,1,1",`
+`"minecraft:iron_ore,1,1"`
 formatted block,tier,rarity
 
 a tier is defined per funnel, a cobblestone funnel is tier 1 etc
