@@ -7,7 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.options.GameOptions;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -66,8 +66,10 @@ public class FunnelBlock extends Block {
 				world.playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1, 1);
 			}
 
-			Identifier randomBlockId = OreManager.weightedListCollection.get(this.tier).pickRandom(random);
-			world.setBlockState(pos.down(), Registry.BLOCK.get(randomBlockId).getDefaultState());
+			Identifier randomBlockId = OreManager.weightedListCollection.get(this.tier).shuffle().stream().findFirst().orElse(null);
+			if (randomBlockId != null) {
+				world.setBlockState(pos.down(), Registry.BLOCK.get(randomBlockId).getDefaultState());
+			}
 		}
 		world.getBlockTickScheduler().schedule(pos, this, this.period);
 	}
@@ -98,9 +100,9 @@ public class FunnelBlock extends Block {
 	}
 
 	@Override
-	public void buildTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
+	public void appendTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
 		if (world != null) { // prevents many calls to this method during startup
-			super.buildTooltip(stack, world, tooltip, options);
+			super.appendTooltip(stack, world, tooltip, options);
 
 			Identifier id = this.getGreatestWeight();
 			GameOptions gameOptions = MinecraftClient.getInstance().options;
@@ -138,6 +140,7 @@ public class FunnelBlock extends Block {
 	 *
 	 * @return The identifier of the block with the biggest weight for this tier
 	 */
+	@SuppressWarnings("unchecked")
 	private Identifier getGreatestWeight() {
 		return ((WeightedListAccessor<Identifier>) this.getList()).getEntries().stream()
 				.sorted(Comparator.comparing(WeightedList.Entry::getElement))

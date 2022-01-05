@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,38 +16,21 @@ import java.util.List;
 public class OreManager {
 	public static final List<WeightedList<Identifier>> weightedListCollection = new ArrayList<>();
 	private static final String[] DEFAULT_ORES = {
-			//	ore/tag, funnel tier, weight
-			"minecraft:cobblestone,0,100",
-			"minecraft:stone,0,100",
-			"minecraft:coal_ore,0,100",
-			"c:tin_ore,0,100",
-			"c:copper_ore,0,100",
-			"minecraft:iron_ore,1,100",
-			"c:zinc_ore,1,100",
-			"c:aluminum_ore,1,100",
-			"c:lead_ore,1,100",
-			"c:silver_ore,2,100",
-			"minecraft:redstone_ore,2,100",
-			"minecraft:nether_quartz_ore,2,100",
-			"minecraft:gold_ore,2,100",
-			"c:uranium_ore,2,100",
-			"minecraft:diamond_ore,3,20",
-			"c:platinum_ore,3,20",
-			"c:tungsten_ore,3,20",
-			"c:osmium_ore,4,20",
-			"c:palladium_ore,4,20",
-			"c:amethyst_ore,4,20",
-			"c:iridium_ore,4,20",
-			"c:topaz_ore,4,20",
-			"c:cobalt_ore,4,20",
-			"c:peridot_ore,4,20",
-			"c:sapphire_ore,4,20",
-			"c:ruby_ore,4,20",
-			"minecraft:ancient_debris,4,1"
+			//	ore, funnel tier, weight
+			"minecraft:cobblestone,0,512",
+			"minecraft:stone,0,512",
+			"minecraft:coal_ore,0,256",
+			"minecraft:copper_ore,0,128",
+			"minecraft:iron_ore,0,128",
+			"minecraft:redstone_ore,1,64",
+			"minecraft:nether_quartz_ore,1,64",
+			"minecraft:gold_ore,1,64",
+			"minecraft:diamond_ore,2,16",
+			"minecraft:ancient_debris,2,1",
 	};
 
 	public static void makeOreTable() {
-		File file = Path.of(FabricLoader.getInstance().getConfigDirectory().getPath(), "SCF", "ores.acfg").toFile();
+		File file = Paths.get(FabricLoader.getInstance().getConfigDir().toString(), "SCF", "ores.acfg").toFile();
 
 		// write default values if no file exists
 		if (!file.exists()) {

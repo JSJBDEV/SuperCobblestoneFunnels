@@ -18,9 +18,11 @@ public class SCF implements ModInitializer {
 	public static final Logger LOGGER = Logger.getLogger("SCF");
 
 	public static Block COBBLESTONE_FUNNEL_BLOCK;
-	public static Block COPPER_FUNNEL_BLOCK;
-	public static Block BRONZE_FUNNEL_BLOCK;
 	public static Block IRON_FUNNEL_BLOCK;
+	public static Block COPPER_FUNNEL_BLOCK;
+	public static Block TIN_FUNNEL_BLOCK;
+	public static Block BRONZE_FUNNEL_BLOCK;
+	public static Block SILVER_FUNNEL_BLOCK;
 	public static Block GOLD_FUNNEL_BLOCK;
 	public static Block DIAMOND_FUNNEL_BLOCK;
 	public static Block NETHERITE_FUNNEL_BLOCK;
@@ -34,13 +36,15 @@ public class SCF implements ModInitializer {
 		ConfigUtils.checkConfigs();
 		OreManager.makeOreTable();
 
-		COBBLESTONE_FUNNEL_BLOCK = registerFunnel("cobblestone_funnel", "cobblelvl", "cobblespeed");
-		COPPER_FUNNEL_BLOCK = registerFunnel("copper_funnel", "copperlvl", "copperspeed");
-		BRONZE_FUNNEL_BLOCK = registerFunnel("bronze_funnel", "bronzelvl", "bronzespeed");
-		IRON_FUNNEL_BLOCK = registerFunnel("iron_funnel", "ironlvl", "ironspeed");
-		GOLD_FUNNEL_BLOCK = registerFunnel("gold_funnel", "goldlvl", "goldspeed");
-		DIAMOND_FUNNEL_BLOCK = registerFunnel("diamond_funnel", "diamondlvl", "diamondspeed");
-		NETHERITE_FUNNEL_BLOCK = registerFunnel("netherite_funnel", "netheritelvl", "netheritespeed");
+		COBBLESTONE_FUNNEL_BLOCK = registerFunnel("cobblestone_funnel", "cobble-tier", "cobble-speed");
+		IRON_FUNNEL_BLOCK = registerFunnel("iron_funnel", "iron-tier", "iron-speed");
+		COPPER_FUNNEL_BLOCK = registerFunnel("copper_funnel", "copper-tier", "copper-speed");
+		TIN_FUNNEL_BLOCK = registerFunnel("tin_funnel", "tin-tier", "tin-speed");
+		BRONZE_FUNNEL_BLOCK = registerFunnel("bronze_funnel", "bronze-tier", "bronze-speed");
+		SILVER_FUNNEL_BLOCK = registerFunnel("silver_funnel", "silver-tier", "silver-speed");
+		GOLD_FUNNEL_BLOCK = registerFunnel("gold_funnel", "gold-tier", "gold-speed");
+		DIAMOND_FUNNEL_BLOCK = registerFunnel("diamond_funnel", "diamond-tier", "diamond-speed");
+		NETHERITE_FUNNEL_BLOCK = registerFunnel("netherite_funnel", "netherite-tier", "netherite-speed");
 	}
 
 	/**
