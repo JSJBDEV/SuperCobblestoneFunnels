@@ -39,47 +39,46 @@ public class ConfigUtils {
 	}
 
 	public static Map<String, String> checkConfigs() {
-		if (file.exists()) {
-			return loadConfigs();
+		if (!file.exists()) {
+			generateConfigs(makeDefaults());
 		}
-		generateConfigs(makeDefaults());
 		return loadConfigs();
 	}
 
 	private static List<String> makeDefaults() {
 		List<String> defaults = new ArrayList<>();
-		defaults.add("#cobblestone funnel ore level (default 5)");
-		defaults.add("cobblelvl=5");
+		defaults.add("#cobblestone funnel ore level (default 0)");
+		defaults.add("cobblelvl=0");
 		defaults.add("#cobblestone funnel speed (default 60)");
 		defaults.add("cobblespeed=60");
 
-		defaults.add("#copper funnel ore level (default 9)");
-		defaults.add("copperlvl=9");
+		defaults.add("#copper funnel ore level (default 1)");
+		defaults.add("copperlvl=1");
 		defaults.add("#copper funnel speed (default 60)");
 		defaults.add("copperspeed=60");
 
-		defaults.add("#bronze funnel ore level (default 9)");
-		defaults.add("bronzelvl=9");
+		defaults.add("#bronze funnel ore level (default 1)");
+		defaults.add("bronzelvl=1");
 		defaults.add("#bronze funnel speed (default 30)");
 		defaults.add("bronzespeed=30");
 
-		defaults.add("#iron funnel ore level (default 14)");
-		defaults.add("ironlvl=14");
+		defaults.add("#iron funnel ore level (default 2)");
+		defaults.add("ironlvl=2");
 		defaults.add("#iron funnel speed (default 50)");
 		defaults.add("ironspeed=50");
 
-		defaults.add("#gold funnel ore level (default 17)");
-		defaults.add("goldlvl=17");
+		defaults.add("#gold funnel ore level (default 3)");
+		defaults.add("goldlvl=3");
 		defaults.add("#gold funnel speed (default 40)");
 		defaults.add("goldspeed=40");
 
-		defaults.add("#diamond funnel ore level (default -1)");
-		defaults.add("diamondlvl=-1");
+		defaults.add("#diamond funnel ore level (default 4)");
+		defaults.add("diamondlvl=4");
 		defaults.add("#diamond funnel speed (default 40)");
 		defaults.add("diamondspeed=40");
 
-		defaults.add("#netherite funnel ore level (default -1)");
-		defaults.add("netheritelvl=-1");
+		defaults.add("#netherite funnel ore level (default 5)");
+		defaults.add("netheritelvl=5");
 		defaults.add("#netherite funnel speed (default 20)");
 		defaults.add("netheritespeed=20");
 		return defaults;

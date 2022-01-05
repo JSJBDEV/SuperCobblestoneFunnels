@@ -21,67 +21,6 @@ import java.util.Arrays;
 import java.util.Map;
 
 public class SCF implements ModInitializer {
-	public static final Identifier SEND_SOUND = new Identifier("scf", "send_sound");
-	private static final String[] cRES = {
-			"minecraft:cobblestone",
-			"minecraft:stone",
-			"minecraft:coal_ore",
-			"c:tin_ore",
-			"c:copper_ore",
-			"minecraft:iron_ore",
-			"c:zinc_ore",
-			"c:aluminum_ore",
-			"c:lead_ore",
-			"c:silver_ore",
-			"minecraft:redstone_ore",
-			"minecraft:nether_quartz_ore",
-			"minecraft:gold_ore",
-			"c:uranium_ore",
-			"minecraft:diamond_ore",
-			"c:platinum_ore",
-			"c:tungsten_ore",
-			"c:osmium_ore",
-			"c:palladium_ore",
-			"c:amethyst_ore",
-			"c:iridium_ore",
-			"c:topaz_ore",
-			"c:cobalt_ore",
-			"c:peridot_ore",
-			"c:sapphire_ore",
-			"c:ruby_ore",
-			"minecraft:ancient_debris",
-	};
-
-	private static final String[] cResRolls = {
-			"100",
-			"100",
-			"100",
-			"100",
-			"100",
-			"100",
-			"100",
-			"100",
-			"100",
-			"100",
-			"100",
-			"100",
-			"100",
-			"100",
-			"20",
-			"20",
-			"20",
-			"20",
-			"20",
-			"20",
-			"20",
-			"20",
-			"20",
-			"20",
-			"20",
-			"20",
-			"1"
-	};
-
 	public static String[] ORES = {};
 	public static String[] WEIGHTS = {};
 
@@ -100,6 +39,7 @@ public class SCF implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ConfigUtils.checkConfigs();
+		OreManager.makeOreTable();
 
 		COBBLESTONE_FUNNEL_BLOCK = registerFunnel("cobblestone_funnel", "cobblelvl", "cobblespeed");
 		COPPER_FUNNEL_BLOCK = registerFunnel("copper_funnel", "copperlvl", "copperspeed");
@@ -108,8 +48,6 @@ public class SCF implements ModInitializer {
 		GOLD_FUNNEL_BLOCK = registerFunnel("gold_funnel", "goldlvl", "goldspeed");
 		DIAMOND_FUNNEL_BLOCK = registerFunnel("diamond_funnel", "diamondlvl", "diamondspeed");
 		NETHERITE_FUNNEL_BLOCK = registerFunnel("netherite_funnel", "netheritelvl", "netheritespeed");
-
-		readOreTable();
 	}
 
 	private FunnelBlock registerFunnel(String id, String level, String speed) {
@@ -128,27 +66,5 @@ public class SCF implements ModInitializer {
 				new BlockItem(block, new Item.Settings().group(TAB)));
 
 		return block;
-	}
-
-	private void readOreTable() {
-		File block = new File(FabricLoader.getInstance().getConfigDirectory().getPath() + "/SCF/funnel_blocks.acfg");
-		File weight = new File(FabricLoader.getInstance().getConfigDirectory().getPath() + "/SCF/funnel_blocks_weights.acfg");
-
-		try {
-			if (!block.exists()) {
-				FileUtils.writeLines(block, Arrays.asList(cRES));
-				ORES = Arrays.asList(cRES).toArray(ORES);
-			} else {
-				ORES = FileUtils.readLines(block, "utf-8").toArray(ORES);
-			}
-			if (!weight.exists()) {
-				FileUtils.writeLines(weight, Arrays.asList(cResRolls));
-				WEIGHTS = Arrays.asList(cResRolls).toArray(WEIGHTS);
-			} else {
-				WEIGHTS = FileUtils.readLines(weight, "utf-8").toArray(WEIGHTS);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 }
