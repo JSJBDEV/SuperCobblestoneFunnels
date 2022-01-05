@@ -2,17 +2,20 @@ package gd.rf.acro.scf;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.collection.WeightedList;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class OreManager {
-	private static final String[] ores_default = {
+	public static final List<WeightedList<Identifier>> weightedListCollection = new ArrayList<>();
+	private static final String[] DEFAULT_ORES = {
 			//	ore/tag, funnel tier, weight
 			"minecraft:cobblestone,0,100",
 			"minecraft:stone,0,100",
@@ -43,50 +46,80 @@ public class OreManager {
 			"minecraft:ancient_debris,4,1"
 	};
 
-	public static final List<WeightedList<Identifier>> WEIGHTED_LIST_COLLECTION = new ArrayList<>();
-
 	public static void makeOreTable() {
-		File file = new File(FabricLoader.getInstance().getConfigDirectory().getPath() + "/SCF/ores.acfg");
+		File file = Path.of(FabricLoader.getInstance().getConfigDirectory().getPath(), "SCF", "ores.acfg").toFile();
+
+		if (!file.exists()) {
+			try {
+				FileUtils.writeLines(file, Arrays.asList(DEFAULT_ORES));
+			} catch (IOException e) {
+				// something went wrong with creating the files
+				e.printStackTrace();
+			}
+		}
 
 		try {
-			if (!file.exists()) {
-				FileUtils.writeLines(file, Arrays.asList(ores_default));
-			}
+			List<String> lines = FileUtils.readLines(file, "utf-8");
 
-			FileUtils.readLines(file, "utf-8").parallelStream()
-					.map(e -> e.replace(" ", "")) // remove spaces
+			lines.parallelStream()
+					.map(e -> e.replaceAll("\\s", "")) // remove spaces
 					.filter(e -> e.matches("([a-z0-9_.-]+:)?[a-z0-9_.-]+,\\d+,\\d+")) // is valid format
 					.map(e -> e.split(",")) // split arguments
 					.sorted((a, b) -> -a[1].compareTo(b[1])) // sort it so that highest tier is done first
 					.forEachOrdered(OreManager::setWeights);
+
+			lines.parallelStream()
+					.map(e -> e.replace("\\s", "")) // remove spaces
+					.filter(e -> !e.matches("([a-z0-9_.-]+:)?[a-z0-9_.-]+,\\d+,\\d+")) // is not valid format
+					.forEachOrdered(e -> {
+						SCF.LOGGER.warning("invalid format");
+						SCF.LOGGER.warning(e);
+					});
 		} catch (IOException e) {
+			// something went wrong with loading the files
 			e.printStackTrace();
 		}
 	}
 
 	private static void setWeights(String[] ctx) {
+		Identifier id;
+		int tier;
+		int weight;
+
 		try {
-			Identifier id = new Identifier(ctx[0]);
-			int tier = Integer.parseInt(ctx[1]);
-			int weight = Integer.parseInt(ctx[2]);
+			id = new Identifier(ctx[0]);
+		} catch (InvalidIdentifierException e) {
+			SCF.LOGGER.warning("invalid config identifier");
+			SCF.LOGGER.warning("[" + ctx[0] + "], " + ctx[1] + ", " + ctx[2]);
+			return;
+		}
+
+		try {
+			tier = Integer.parseInt(ctx[1]);
 
 			if (tier < 0) {
-				System.err.println("invalid config tier");
-				System.err.println(ctx[0] + ", [" + ctx[1] + "], " + ctx[2]);
-				return;
-			}
-
-			for (int i = WEIGHTED_LIST_COLLECTION.size(); i <= tier; i++) {
-				WEIGHTED_LIST_COLLECTION.add(new WeightedList<>());
-			}
-
-			for (int i = tier; i < WEIGHTED_LIST_COLLECTION.size(); i++) {
-				WEIGHTED_LIST_COLLECTION.get(i).add(id, weight);
+				throw new NumberFormatException();
 			}
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			System.err.println("invalid config identifier");
-			System.err.println("[" + ctx[0] + "], " + ctx[1] + ", " + ctx[2]);
+			SCF.LOGGER.warning("invalid tier number");
+			SCF.LOGGER.warning(ctx[0] + ", [" + ctx[1] + "], " + ctx[2]);
+			return;
+		}
+
+		try {
+			weight = Integer.parseInt(ctx[2]);
+		} catch (NumberFormatException e) {
+			SCF.LOGGER.warning("invalid weight number");
+			SCF.LOGGER.warning(ctx[0] + ", " + ctx[1] + ", [" + ctx[2] + "]");
+			return;
+		}
+
+		for (int i = weightedListCollection.size(); i <= tier; i++) {
+			weightedListCollection.add(new WeightedList<>());
+		}
+
+		for (int i = tier; i < weightedListCollection.size(); i++) {
+			weightedListCollection.get(i).add(id, weight);
 		}
 	}
 }

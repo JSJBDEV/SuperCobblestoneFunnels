@@ -5,20 +5,22 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 
 public class ConfigUtils {
 	public static Map<String, Integer> config = new HashMap<>();
-	private static final File file = new File(FabricLoader.getInstance().getConfigDirectory().getPath() + "/SCF/config.acfg");
+	private static final File file = Path.of(FabricLoader.getInstance().getConfigDirectory().getPath(), "SCF", "config.acfg").toFile();
 
 	public static Map<String, Integer> loadConfigs() {
 		try {
 			FileUtils.readLines(file, "utf-8").stream()
-					.map(e -> e.replace(" ", "")) // remove spaces
+					.map(e -> e.replaceAll("\\s", "")) // remove spaces
 					.filter(e -> e.matches("^[^#]\\w+=\\d+$")) // is valid format
 					.map(e -> e.split("=")) // split arguments
 					.forEach(entry -> config.put(entry[0], Integer.parseInt(entry[1])));
 		} catch (IOException e) {
+			// something went wrong with loading the files
 			e.printStackTrace();
 		}
 		return config;
@@ -28,6 +30,7 @@ public class ConfigUtils {
 		try {
 			FileUtils.writeLines(file, input);
 		} catch (IOException e) {
+			// something went wrong with creating the files
 			e.printStackTrace();
 		}
 	}

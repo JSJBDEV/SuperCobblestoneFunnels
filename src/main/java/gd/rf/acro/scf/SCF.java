@@ -19,10 +19,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class SCF implements ModInitializer {
-	public static String[] ORES = {};
-	public static String[] WEIGHTS = {};
+	public static final Logger LOGGER = Logger.getLogger("SCF");
 
 	public static final ItemGroup TAB = FabricItemGroupBuilder.build(
 			new Identifier("scf", "tab"),

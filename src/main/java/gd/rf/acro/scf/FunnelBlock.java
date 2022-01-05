@@ -12,7 +12,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -45,8 +44,8 @@ public class FunnelBlock extends Block {
 		this.level = level;
 		this.period = period;
 
-		if (this.level < 0 || this.level >= OreManager.WEIGHTED_LIST_COLLECTION.size()) {
-			this.level = MathHelper.clamp(this.level, 0, OreManager.WEIGHTED_LIST_COLLECTION.size() - 1);
+		if (this.level < 0 || this.level >= OreManager.weightedListCollection.size()) {
+			this.level = MathHelper.clamp(this.level, 0, OreManager.weightedListCollection.size() - 1);
 		}
 	}
 
@@ -66,7 +65,7 @@ public class FunnelBlock extends Block {
 				world.playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1, 1);
 			}
 
-			Identifier randomBlockId = OreManager.WEIGHTED_LIST_COLLECTION.get(this.level).pickRandom(random);
+			Identifier randomBlockId = OreManager.weightedListCollection.get(this.level).pickRandom(random);
 			world.setBlockState(pos.down(), Registry.BLOCK.get(randomBlockId).getDefaultState());
 		}
 		world.getBlockTickScheduler().schedule(pos, this, this.period);
@@ -99,10 +98,8 @@ public class FunnelBlock extends Block {
 			Identifier id = this.getGreatestWeight();
 			GameOptions gameOptions = MinecraftClient.getInstance().options;
 
-			tooltip.add(new TranslatableText("util.scf.blocks_per_second",
-					this.period / 20f));
-			tooltip.add(new TranslatableText("util.scf.best_block",
-					new TranslatableText("block." + id.getNamespace() + "." + id.getPath())));
+			tooltip.add(new TranslatableText("util.scf.blocks_per_second", this.period / 20f));
+			tooltip.add(new TranslatableText("util.scf.best_block", Registry.BLOCK.get(id).getName()));
 			tooltip.add(new TranslatableText("util.scf.extra_info",
 					new TranslatableText(gameOptions.keySneak.getTranslationKey()),
 					new TranslatableText(gameOptions.keyUse.getTranslationKey())
@@ -116,7 +113,7 @@ public class FunnelBlock extends Block {
 		if (player.isSneaking() && hand == Hand.MAIN_HAND && world.isClient) {
 			MutableText text = new TranslatableText("util.scf.funnel_output");
 			this.getList().stream().forEach(e -> text.append(new LiteralText("\n  "))
-							.append(new TranslatableText("block." + e.getNamespace() + "." + e.getPath())));
+							.append(Registry.BLOCK.get(e).getName()));
 
 			player.sendMessage(text, false);
 		}
@@ -124,7 +121,7 @@ public class FunnelBlock extends Block {
 	}
 
 	private WeightedList<Identifier> getList() {
-		return OreManager.WEIGHTED_LIST_COLLECTION.get(this.level);
+		return OreManager.weightedListCollection.get(this.level);
 	}
 
 	private Identifier getGreatestWeight() {
