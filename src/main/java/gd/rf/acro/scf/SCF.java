@@ -130,39 +130,10 @@ public class SCF implements ModInitializer {
 		return block;
 	}
 
-	private void registerBlocks() {
-		Map<String, String> c = ConfigUtils.config;
-
-		COBBLESTONE_FUNNEL_BLOCK = new FunnelBlock(AbstractBlock.Settings.of(Material.STONE).ticksRandomly().strength(1.5f, 0), Integer.parseInt(c.get("cobblelvl")), Integer.parseInt(c.get("cobblespeed")));
-		COPPER_FUNNEL_BLOCK = new FunnelBlock(AbstractBlock.Settings.of(Material.STONE).ticksRandomly().strength(1.5f, 0), Integer.parseInt(c.get("copperlvl")), Integer.parseInt(c.get("copperspeed")));
-		BRONZE_FUNNEL_BLOCK = new FunnelBlock(AbstractBlock.Settings.of(Material.STONE).ticksRandomly().strength(1.5f, 0), Integer.parseInt(c.get("bronzelvl")), Integer.parseInt(c.get("bronzespeed")));
-		IRON_FUNNEL_BLOCK = new FunnelBlock(AbstractBlock.Settings.of(Material.STONE).ticksRandomly().strength(1.5f, 0), Integer.parseInt(c.get("ironlvl")), Integer.parseInt(c.get("ironspeed")));
-		GOLD_FUNNEL_BLOCK = new FunnelBlock(AbstractBlock.Settings.of(Material.STONE).ticksRandomly().strength(1.5f, 0), Integer.parseInt(c.get("goldlvl")), Integer.parseInt(c.get("goldspeed")));
-		DIAMOND_FUNNEL_BLOCK = new FunnelBlock(AbstractBlock.Settings.of(Material.STONE).ticksRandomly().strength(1.5f, 0), Integer.parseInt(c.get("diamondlvl")), Integer.parseInt(c.get("diamondspeed")));
-		NETHERITE_FUNNEL_BLOCK = new FunnelBlock(AbstractBlock.Settings.of(Material.STONE).ticksRandomly().strength(1.5f, 0), Integer.parseInt(c.get("netheritelvl")), Integer.parseInt(c.get("netheritespeed")));
-
-		Registry.register(Registry.BLOCK, new Identifier("scf", "cobblestone_funnel"), COBBLESTONE_FUNNEL_BLOCK);
-		Registry.register(Registry.BLOCK, new Identifier("scf", "copper_funnel"), COPPER_FUNNEL_BLOCK);
-		Registry.register(Registry.BLOCK, new Identifier("scf", "bronze_funnel"), BRONZE_FUNNEL_BLOCK);
-		Registry.register(Registry.BLOCK, new Identifier("scf", "iron_funnel"), IRON_FUNNEL_BLOCK);
-		Registry.register(Registry.BLOCK, new Identifier("scf", "gold_funnel"), GOLD_FUNNEL_BLOCK);
-		Registry.register(Registry.BLOCK, new Identifier("scf", "diamond_funnel"), DIAMOND_FUNNEL_BLOCK);
-		Registry.register(Registry.BLOCK, new Identifier("scf", "netherite_funnel"), NETHERITE_FUNNEL_BLOCK);
-	}
-
-	private void registerItems() {
-		Registry.register(Registry.ITEM, new Identifier("scf", "cobblestone_funnel"), new BlockItem(COBBLESTONE_FUNNEL_BLOCK, new Item.Settings().group(TAB)));
-		Registry.register(Registry.ITEM, new Identifier("scf", "copper_funnel"), new BlockItem(COPPER_FUNNEL_BLOCK, new Item.Settings().group(TAB)));
-		Registry.register(Registry.ITEM, new Identifier("scf", "bronze_funnel"), new BlockItem(BRONZE_FUNNEL_BLOCK, new Item.Settings().group(TAB)));
-		Registry.register(Registry.ITEM, new Identifier("scf", "iron_funnel"), new BlockItem(IRON_FUNNEL_BLOCK, new Item.Settings().group(TAB)));
-		Registry.register(Registry.ITEM, new Identifier("scf", "gold_funnel"), new BlockItem(GOLD_FUNNEL_BLOCK, new Item.Settings().group(TAB)));
-		Registry.register(Registry.ITEM, new Identifier("scf", "diamond_funnel"), new BlockItem(DIAMOND_FUNNEL_BLOCK, new Item.Settings().group(TAB)));
-		Registry.register(Registry.ITEM, new Identifier("scf", "netherite_funnel"), new BlockItem(NETHERITE_FUNNEL_BLOCK, new Item.Settings().group(TAB)));
-	}
-
 	private void readOreTable() {
 		File block = new File(FabricLoader.getInstance().getConfigDirectory().getPath() + "/SCF/funnel_blocks.acfg");
 		File weight = new File(FabricLoader.getInstance().getConfigDirectory().getPath() + "/SCF/funnel_blocks_weights.acfg");
+
 		try {
 			if (!block.exists()) {
 				FileUtils.writeLines(block, Arrays.asList(cRES));

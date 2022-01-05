@@ -12,6 +12,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.tag.FluidTags;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -51,11 +54,11 @@ public class FunnelBlock extends Block {
 	public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
 		super.scheduledTick(state, world, pos, random);
 		if (hasLavaAndWater(pos, world) && world.getBlockState(pos.down()).isAir()) {
-			PacketByteBuf packetByteBuf = new PacketByteBuf(Unpooled.buffer());
-			packetByteBuf.writeInt(1);
-			PlayerStream.around(world, pos, 5).forEach(pp -> ServerSidePacketRegistry.INSTANCE.sendToPlayer(pp, SCF.SEND_SOUND, packetByteBuf));
+			if (!world.isClient) {
+				world.playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1, 1);
+			}
 			if (this.level == -1) {
-                this.level = SCF.ORES.length;
+				this.level = SCF.ORES.length;
 			}
 			long picked = RandomUtils.nextLong(0, countTotalWeights());
 			System.out.println("picked: " + picked);
