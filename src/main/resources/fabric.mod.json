@@ -20,8 +20,7 @@
   "entrypoints": {
     "main": [
       "gd.rf.acro.scf.SCF"
-    ],
-    "client": ["gd.rf.acro.scf.ClientInit"]
+    ]
   },
   "mixins": [
     "modid.mixins.json"
