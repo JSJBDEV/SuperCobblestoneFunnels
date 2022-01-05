@@ -37,22 +37,22 @@ import java.util.Random;
 public class FunnelBlock extends Block {
 	private final static VoxelShape SHAPE = Block.createCuboidShape(2, 1, 2, 14, 16, 14);
 	private final int period;
-	private int level;
+	private int tier;
 
-	public FunnelBlock(Settings settings, int level, int period) {
+	public FunnelBlock(Settings settings, int tier, int period) {
 		super(settings);
-		this.level = level;
+		this.tier = tier;
 		this.period = period;
 
-		if (this.level < 0 || this.level >= OreManager.weightedListCollection.size()) {
-			this.level = MathHelper.clamp(this.level, 0, OreManager.weightedListCollection.size() - 1);
+		if (this.tier < 0 || this.tier >= OreManager.weightedListCollection.size()) { // makes sure tier doesn't exceed bounds
+			this.tier = MathHelper.clamp(this.tier, 0, OreManager.weightedListCollection.size() - 1);
 		}
 	}
 
 	@Override
 	@SuppressWarnings("deprecation")
 	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-		return SHAPE;
+		return SHAPE; // storing an object in memory is faster
 	}
 
 	@Override
@@ -62,10 +62,11 @@ public class FunnelBlock extends Block {
 
 		if (hasLavaAndWater(pos, world) && world.getBlockState(pos.down()).isAir()) {
 			if (!world.isClient) {
+				// playing sound is build in by mojang
 				world.playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1, 1);
 			}
 
-			Identifier randomBlockId = OreManager.weightedListCollection.get(this.level).pickRandom(random);
+			Identifier randomBlockId = OreManager.weightedListCollection.get(this.tier).pickRandom(random);
 			world.setBlockState(pos.down(), Registry.BLOCK.get(randomBlockId).getDefaultState());
 		}
 		world.getBlockTickScheduler().schedule(pos, this, this.period);
@@ -80,6 +81,12 @@ public class FunnelBlock extends Block {
 		return hasLava && hasWater;
 	}
 
+	/**
+	 * Returns fluid at the given position
+	 * @param pos The position to check
+	 * @param world The world to check in
+	 * @return The fluid at the given position
+	 */
 	private Fluid getFluidAtPos(BlockPos pos, World world) {
 		return world.getBlockState(pos).getFluidState().getFluid();
 	}
@@ -92,12 +99,13 @@ public class FunnelBlock extends Block {
 
 	@Override
 	public void buildTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
-		super.buildTooltip(stack, world, tooltip, options);
+		if (world != null) { // prevents many calls to this method during startup
+			super.buildTooltip(stack, world, tooltip, options);
 
-		if (world != null) {
 			Identifier id = this.getGreatestWeight();
 			GameOptions gameOptions = MinecraftClient.getInstance().options;
 
+			// uses translatable texts for multi-lang support
 			tooltip.add(new TranslatableText("util.scf.blocks_per_second", this.period / 20f));
 			tooltip.add(new TranslatableText("util.scf.best_block", Registry.BLOCK.get(id).getName()));
 			tooltip.add(new TranslatableText("util.scf.extra_info",
@@ -111,9 +119,10 @@ public class FunnelBlock extends Block {
 	@SuppressWarnings("deprecation")
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
 		if (player.isSneaking() && hand == Hand.MAIN_HAND && world.isClient) {
+			// uses translatable texts for multi-lang support
 			MutableText text = new TranslatableText("util.scf.funnel_output");
 			this.getList().stream().forEach(e -> text.append(new LiteralText("\n  "))
-							.append(Registry.BLOCK.get(e).getName()));
+							.append(Registry.BLOCK.get(e).getName())); // puts each entry on a new line slightly indented
 
 			player.sendMessage(text, false);
 		}
@@ -121,9 +130,14 @@ public class FunnelBlock extends Block {
 	}
 
 	private WeightedList<Identifier> getList() {
-		return OreManager.weightedListCollection.get(this.level);
+		return OreManager.weightedListCollection.get(this.tier);
 	}
 
+	/**
+	 * Gets the identifier of the block with the biggest weight for this tier
+	 *
+	 * @return The identifier of the block with the biggest weight for this tier
+	 */
 	private Identifier getGreatestWeight() {
 		return ((WeightedListAccessor<Identifier>) this.getList()).getEntries().stream()
 				.sorted(Comparator.comparing(WeightedList.Entry::getElement))

@@ -49,6 +49,7 @@ public class OreManager {
 	public static void makeOreTable() {
 		File file = Path.of(FabricLoader.getInstance().getConfigDirectory().getPath(), "SCF", "ores.acfg").toFile();
 
+		// write default values if no file exists
 		if (!file.exists()) {
 			try {
 				FileUtils.writeLines(file, Arrays.asList(DEFAULT_ORES));
@@ -61,6 +62,7 @@ public class OreManager {
 		try {
 			List<String> lines = FileUtils.readLines(file, "utf-8");
 
+			// load all data
 			lines.parallelStream()
 					.map(e -> e.replaceAll("\\s", "")) // remove spaces
 					.filter(e -> e.matches("([a-z0-9_.-]+:)?[a-z0-9_.-]+,\\d+,\\d+")) // is valid format
@@ -68,6 +70,7 @@ public class OreManager {
 					.sorted((a, b) -> -a[1].compareTo(b[1])) // sort it so that highest tier is done first
 					.forEachOrdered(OreManager::setWeights);
 
+			// let user know if the config format was wrong
 			lines.parallelStream()
 					.map(e -> e.replace("\\s", "")) // remove spaces
 					.filter(e -> !e.matches("([a-z0-9_.-]+:)?[a-z0-9_.-]+,\\d+,\\d+")) // is not valid format
@@ -81,6 +84,12 @@ public class OreManager {
 		}
 	}
 
+	/**
+	 * A helper to set all the weights
+	 * Must be called with the highest tier first
+	 *
+	 * @param ctx The params for this value, in the order [Identifier, tier, weight]
+	 */
 	private static void setWeights(String[] ctx) {
 		Identifier id;
 		int tier;
@@ -89,6 +98,7 @@ public class OreManager {
 		try {
 			id = new Identifier(ctx[0]);
 		} catch (InvalidIdentifierException e) {
+			// shouldn't happen with regex check
 			SCF.LOGGER.warning("invalid config identifier");
 			SCF.LOGGER.warning("[" + ctx[0] + "], " + ctx[1] + ", " + ctx[2]);
 			return;
@@ -98,9 +108,10 @@ public class OreManager {
 			tier = Integer.parseInt(ctx[1]);
 
 			if (tier < 0) {
-				throw new NumberFormatException();
+				throw new NumberFormatException(); // get into the catch
 			}
 		} catch (NumberFormatException e) {
+			// shouldn't happen with regex check
 			SCF.LOGGER.warning("invalid tier number");
 			SCF.LOGGER.warning(ctx[0] + ", [" + ctx[1] + "], " + ctx[2]);
 			return;
@@ -109,15 +120,18 @@ public class OreManager {
 		try {
 			weight = Integer.parseInt(ctx[2]);
 		} catch (NumberFormatException e) {
+			// shouldn't happen with regex check
 			SCF.LOGGER.warning("invalid weight number");
 			SCF.LOGGER.warning(ctx[0] + ", " + ctx[1] + ", [" + ctx[2] + "]");
 			return;
 		}
 
+		// add new lists if they don't exist yet
 		for (int i = weightedListCollection.size(); i <= tier; i++) {
 			weightedListCollection.add(new WeightedList<>());
 		}
 
+		// fill the list with their weights
 		for (int i = tier; i < weightedListCollection.size(); i++) {
 			weightedListCollection.get(i).add(id, weight);
 		}
