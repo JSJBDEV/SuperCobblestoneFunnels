@@ -2,9 +2,15 @@
   "block.scf.cobblestone_funnel": "Cobblestone Funnel",
   "block.scf.iron_funnel": "Iron Funnel",
   "block.scf.copper_funnel": "Copper Funnel",
+  "block.scf.tin_funnel": "Tin Funnel",
+  "block.scf.silver_funnel": "Silver Funnel",
   "block.scf.gold_funnel": "Gold Funnel",
   "block.scf.diamond_funnel": "Diamond Funnel",
   "block.scf.bronze_funnel": "Bronze Funnel",
   "block.scf.netherite_funnel": "Netherite Funnel",
-  "itemGroup.scf.tab": "Super Cobblestone Funnels"
+  "itemGroup.scf.tab": "Super Cobblestone Funnels",
+  "util.scf.funnel_output": "Possible blocks that get generated:",
+  "util.scf.blocks_per_second": "1 block every %f second(s)",
+  "util.scf.best_block": "best block out: %s",
+  "util.scf.extra_info": "(%s-%s the block to see others!)"
 }
