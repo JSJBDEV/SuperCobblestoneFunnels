@@ -1,5 +1,7 @@
 .gradle
 .idea
 
+remappedSrc
+out
 build
 run
