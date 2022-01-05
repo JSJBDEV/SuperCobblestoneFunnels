@@ -58,8 +58,7 @@ public class SCF implements ModInitializer {
 										.of(Material.STONE)
 										.ticksRandomly()
 										.strength(1.5f, 0),
-								Integer.parseInt(ConfigUtils.config.get(level)),
-								Integer.parseInt(ConfigUtils.config.get(speed))));
+								ConfigUtils.config.get(level), ConfigUtils.config.get(speed)));
 
 		Registry.register(Registry.ITEM,
 				new Identifier("scf", id),

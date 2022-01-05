@@ -5,32 +5,26 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigUtils {
-	public static Map<String, String> config = new HashMap<>();
+	public static Map<String, Integer> config = new HashMap<>();
 	private static final File file = new File(FabricLoader.getInstance().getConfigDirectory().getPath() + "/SCF/config.acfg");
 
-	public static Map<String, String> loadConfigs() {
+	public static Map<String, Integer> loadConfigs() {
 		try {
-			List<String> lines = FileUtils.readLines(file, "utf-8");
-			lines.forEach(line -> {
-				if (line.charAt(0) != '#') {
-					String noSpace = line.replace(" ", "");
-					String[] entry = noSpace.split("=");
-					config.put(entry[0], entry[1]);
-				}
-			});
+			FileUtils.readLines(file, "utf-8").stream()
+					.map(e -> e.replace(" ", "")) // remove spaces
+					.filter(e -> e.matches("^[^#]\\w+=\\d+$")) // is valid format
+					.map(e -> e.split("=")) // split arguments
+					.forEach(entry -> config.put(entry[0], Integer.parseInt(entry[1])));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return config;
 	}
 
-	public static void generateConfigs(List<String> input) {
+	private static void generateConfigs(List<String> input) {
 		try {
 			FileUtils.writeLines(file, input);
 		} catch (IOException e) {
@@ -38,7 +32,7 @@ public class ConfigUtils {
 		}
 	}
 
-	public static Map<String, String> checkConfigs() {
+	public static Map<String, Integer> checkConfigs() {
 		if (!file.exists()) {
 			generateConfigs(makeDefaults());
 		}
@@ -46,41 +40,40 @@ public class ConfigUtils {
 	}
 
 	private static List<String> makeDefaults() {
-		List<String> defaults = new ArrayList<>();
-		defaults.add("#cobblestone funnel ore level (default 0)");
-		defaults.add("cobblelvl=0");
-		defaults.add("#cobblestone funnel speed (default 60)");
-		defaults.add("cobblespeed=60");
-
-		defaults.add("#copper funnel ore level (default 1)");
-		defaults.add("copperlvl=1");
-		defaults.add("#copper funnel speed (default 60)");
-		defaults.add("copperspeed=60");
-
-		defaults.add("#bronze funnel ore level (default 1)");
-		defaults.add("bronzelvl=1");
-		defaults.add("#bronze funnel speed (default 30)");
-		defaults.add("bronzespeed=30");
-
-		defaults.add("#iron funnel ore level (default 2)");
-		defaults.add("ironlvl=2");
-		defaults.add("#iron funnel speed (default 50)");
-		defaults.add("ironspeed=50");
-
-		defaults.add("#gold funnel ore level (default 3)");
-		defaults.add("goldlvl=3");
-		defaults.add("#gold funnel speed (default 40)");
-		defaults.add("goldspeed=40");
-
-		defaults.add("#diamond funnel ore level (default 4)");
-		defaults.add("diamondlvl=4");
-		defaults.add("#diamond funnel speed (default 40)");
-		defaults.add("diamondspeed=40");
-
-		defaults.add("#netherite funnel ore level (default 5)");
-		defaults.add("netheritelvl=5");
-		defaults.add("#netherite funnel speed (default 20)");
-		defaults.add("netheritespeed=20");
-		return defaults;
+		return Arrays.asList(
+				"#cobblestone funnel ore level (default 0)",
+				"cobblelvl=0",
+				"#cobblestone funnel speed (default 60)",
+				"cobblespeed=60",
+				"",
+				"#copper funnel ore level (default 1)",
+				"copperlvl=1",
+				"#copper funnel speed (default 60)",
+				"copperspeed=60",
+				"",
+				"#bronze funnel ore level (default 1)",
+				"bronzelvl=1",
+				"#bronze funnel speed (default 30)",
+				"bronzespeed=30",
+				"",
+				"#iron funnel ore level (default 2)",
+				"ironlvl=2",
+				"#iron funnel speed (default 50)",
+				"ironspeed=50",
+				"",
+				"#gold funnel ore level (default 3)",
+				"goldlvl=3",
+				"#gold funnel speed (default 40)",
+				"goldspeed=40",
+				"",
+				"#diamond funnel ore level (default 4)",
+				"diamondlvl=4",
+				"#diamond funnel speed (default 40)",
+				"diamondspeed=40",
+				"",
+				"#netherite funnel ore level (default 5)",
+				"netheritelvl=5",
+				"#netherite funnel speed (default 20)",
+				"netheritespeed=20");
 	}
 }

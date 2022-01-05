@@ -1,22 +1,27 @@
 package gd.rf.acro.scf;
 
+import gd.rf.acro.scf.mixin.WeightedListAccessor;
+import gd.rf.acro.scf.mixin.WeightedListEntryAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.options.GameOptions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.tag.FluidTags;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.WeightedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -25,8 +30,8 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.RandomUtils;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -55,14 +60,13 @@ public class FunnelBlock extends Block {
 	@SuppressWarnings("deprecation")
 	public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
 		super.scheduledTick(state, world, pos, random);
+
 		if (hasLavaAndWater(pos, world) && world.getBlockState(pos.down()).isAir()) {
 			if (!world.isClient) {
 				world.playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1, 1);
 			}
 
-			System.out.println(OreManager.WEIGHTED_LIST_COLLECTION);
-			System.out.println(OreManager.WEIGHTED_LIST_COLLECTION.get(this.level));
-			Identifier randomBlockId = OreManager.WEIGHTED_LIST_COLLECTION.get(this.level).pickRandom(world.random);
+			Identifier randomBlockId = OreManager.WEIGHTED_LIST_COLLECTION.get(this.level).pickRandom(random);
 			world.setBlockState(pos.down(), Registry.BLOCK.get(randomBlockId).getDefaultState());
 		}
 		world.getBlockTickScheduler().schedule(pos, this, this.period);
@@ -87,47 +91,47 @@ public class FunnelBlock extends Block {
 		world.getBlockTickScheduler().schedule(pos, this, this.period);
 	}
 
-//	@Override
-//	public void buildTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
-//		super.buildTooltip(stack, world, tooltip, options);
-//		tooltip.add(new LiteralText("1 block every " + (this.period / 20f) + " second(s)"));
-//		if (this.level == -1) {
-//			this.level = SCF.ORES.length;
-//		}
-//		tooltip.add(new LiteralText("best block out: " + Registry.BLOCK.get(Identifier.tryParse(OreManager.ORES.get(this.level - 1))).getName().getString()));
-//		tooltip.add(new LiteralText("(shift-use the block to see others!)"));
-//	}
+	@Override
+	public void buildTooltip(ItemStack stack, BlockView world, List<Text> tooltip, TooltipContext options) {
+		super.buildTooltip(stack, world, tooltip, options);
+
+		if (world != null) {
+			Identifier id = this.getGreatestWeight();
+			GameOptions gameOptions = MinecraftClient.getInstance().options;
+
+			tooltip.add(new TranslatableText("util.scf.blocks_per_second",
+					this.period / 20f));
+			tooltip.add(new TranslatableText("util.scf.best_block",
+					new TranslatableText("block." + id.getNamespace() + "." + id.getPath())));
+			tooltip.add(new TranslatableText("util.scf.extra_info",
+					new TranslatableText(gameOptions.keySneak.getTranslationKey()),
+					new TranslatableText(gameOptions.keyUse.getTranslationKey())
+			));
+		}
+	}
 
 	@Override
 	@SuppressWarnings("deprecation")
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
 		if (player.isSneaking() && hand == Hand.MAIN_HAND && world.isClient) {
-			for (int i = 0; i < this.level; i++) {
-				player.sendMessage(new LiteralText(Registry.BLOCK.get(Identifier.tryParse(SCF.ORES[i])).getName().getString()), false);
-			}
+			MutableText text = new TranslatableText("util.scf.funnel_output");
+			this.getList().stream().forEach(e -> text.append(new LiteralText("\n  "))
+							.append(new TranslatableText("block." + e.getNamespace() + "." + e.getPath())));
+
+			player.sendMessage(text, false);
 		}
 		return super.onUse(state, world, pos, player, hand, hit);
 	}
 
-	private long countTotalWeights() {
-		long clap = 0;
-		for (int i = 0; i < this.level; i++) {
-			clap += Integer.parseInt(SCF.WEIGHTS[i]);
-		}
-		System.out.println("total: " + clap);
-		return clap + 1; //to include the last number
+	private WeightedList<Identifier> getList() {
+		return OreManager.WEIGHTED_LIST_COLLECTION.get(this.level);
 	}
 
-	private String getOreFromBigNumber(long bigNumber) {
-		int counter = 0;
-		long inter = 0;
-		while (inter < bigNumber) {
-			inter += Integer.parseInt(SCF.WEIGHTS[counter]);
-			if (inter > bigNumber) {
-				return SCF.ORES[counter];
-			}
-			counter++;
-		}
-		return SCF.ORES[counter];
+	private Identifier getGreatestWeight() {
+		return ((WeightedListAccessor<Identifier>) this.getList()).getEntries().stream()
+				.sorted(Comparator.comparing(WeightedList.Entry::getElement))
+				.min(Comparator.comparingInt(e -> ((WeightedListEntryAccessor) e).getWeight()))
+				.map(WeightedList.Entry::getElement)
+				.orElse(null);
 	}
 }
